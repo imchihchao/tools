@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>翻譯圖片搜尋</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>翻譯圖片搜尋</h1>
+        <input type="text" id="chineseText" placeholder="請輸入中文文字">
+        <button onclick="translateAndSearch()">搜尋圖片</button>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function translateAndSearch() {
+            const chineseText = document.getElementById('chineseText').value;
+            if (!chineseText) {
+                alert('請輸入文字！');
+                return;
+            }
+
+            try {
+                // 使用 Google Translate API
+                const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=zh-TW&tl=en&dt=t&q=${encodeURIComponent(chineseText)}`);
+                const data = await response.json();
+                const translatedText = data[0][0][0];
+
+                // 顯示翻譯結果
+                const result = document.getElementById('result');
+                result.style.display = 'block';
+                result.innerHTML = `翻譯結果: ${translatedText}`;
+
+                // 在新分頁開啟 Pixabay 搜尋頁面
+                window.open(`https://pixabay.com/images/search/${encodeURIComponent(translatedText)}`, '_blank');
+            } catch (error) {
+                alert('翻譯過程發生錯誤，請稍後再試。');
+                console.error('Error:', error);
+            }
+        }
+    </script>
+</body>
+</html>
